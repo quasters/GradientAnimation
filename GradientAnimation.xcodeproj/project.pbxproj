@@ -12,6 +12,9 @@
 		54FA7F0729813E7800DB1F14 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA7F0629813E7800DB1F14 /* ViewController.swift */; };
 		54FA7F0C29813E7A00DB1F14 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54FA7F0B29813E7A00DB1F14 /* Assets.xcassets */; };
 		54FA7F0F29813E7A00DB1F14 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 54FA7F0D29813E7A00DB1F14 /* LaunchScreen.storyboard */; };
+		54FA7F172981723800DB1F14 /* ResizableLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA7F162981723800DB1F14 /* ResizableLayer.swift */; };
+		54FA7F192981739000DB1F14 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA7F182981739000DB1F14 /* GradientView.swift */; };
+		54FA7F1C298181BE00DB1F14 /* BubbleLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA7F1B298181BE00DB1F14 /* BubbleLayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		54FA7F0B29813E7A00DB1F14 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		54FA7F0E29813E7A00DB1F14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		54FA7F1029813E7A00DB1F14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		54FA7F162981723800DB1F14 /* ResizableLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableLayer.swift; sourceTree = "<group>"; };
+		54FA7F182981739000DB1F14 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		54FA7F1B298181BE00DB1F14 /* BubbleLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleLayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +41,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		541883892984B3CA00F28AEA /* GradientView+Animations */ = {
+			isa = PBXGroup;
+			children = (
+				54FA7F182981739000DB1F14 /* GradientView.swift */,
+				54FA7F1B298181BE00DB1F14 /* BubbleLayer.swift */,
+				54FA7F162981723800DB1F14 /* ResizableLayer.swift */,
+			);
+			path = "GradientView+Animations";
+			sourceTree = "<group>";
+		};
+		5418838A2984B3EA00F28AEA /* MainScene */ = {
+			isa = PBXGroup;
+			children = (
+				54FA7F0629813E7800DB1F14 /* ViewController.swift */,
+			);
+			path = MainScene;
+			sourceTree = "<group>";
+		};
+		5418838B2984B3F700F28AEA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				54FA7F0229813E7800DB1F14 /* AppDelegate.swift */,
+				54FA7F0429813E7800DB1F14 /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
 		54FA7EF629813E7800DB1F14 = {
 			isa = PBXGroup;
 			children = (
@@ -54,9 +87,9 @@
 		54FA7F0129813E7800DB1F14 /* GradientAnimation */ = {
 			isa = PBXGroup;
 			children = (
-				54FA7F0229813E7800DB1F14 /* AppDelegate.swift */,
-				54FA7F0429813E7800DB1F14 /* SceneDelegate.swift */,
-				54FA7F0629813E7800DB1F14 /* ViewController.swift */,
+				5418838B2984B3F700F28AEA /* App */,
+				541883892984B3CA00F28AEA /* GradientView+Animations */,
+				5418838A2984B3EA00F28AEA /* MainScene */,
 				54FA7F0B29813E7A00DB1F14 /* Assets.xcassets */,
 				54FA7F0D29813E7A00DB1F14 /* LaunchScreen.storyboard */,
 				54FA7F1029813E7A00DB1F14 /* Info.plist */,
@@ -135,8 +168,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				54FA7F0729813E7800DB1F14 /* ViewController.swift in Sources */,
+				54FA7F172981723800DB1F14 /* ResizableLayer.swift in Sources */,
+				54FA7F192981739000DB1F14 /* GradientView.swift in Sources */,
 				54FA7F0329813E7800DB1F14 /* AppDelegate.swift in Sources */,
 				54FA7F0529813E7800DB1F14 /* SceneDelegate.swift in Sources */,
+				54FA7F1C298181BE00DB1F14 /* BubbleLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +240,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -258,7 +294,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

@@ -13,10 +13,15 @@ class ViewController: UIViewController {
     private var isCardViewOpened: Bool = false
     
     // MARK: - UI Elements
-    private lazy var cardView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
+    private lazy var cardView: GradientView = {
+        let view = GradientView()
+        view.backgroundColor = .black
         view.layer.cornerRadius = 15
+        
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(didTapCardView))
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(recognizer)
+        
         return view
     }()
     
@@ -31,58 +36,55 @@ class ViewController: UIViewController {
     }()
     
     private var cardViewTopConstraint: NSLayoutConstraint?
-    private var cardViewLeftConstraint: NSLayoutConstraint?
-    private var cardViewRightConstraint: NSLayoutConstraint?
-
+    
     // MARK: - UIViewController lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
-
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        cardView.startAnimating(speed: 1.0)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        cardView.stopAnimating()
+    }
+    
     // MARK: - Setup UI
     private func setupUI() {
         self.view.backgroundColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         self.view.addSubview(cardView)
         self.view.addSubview(activateButton)
-        setCardViewConstraints(isOpened: false)
+        setCardViewConstraints()
         setActivateButtonConstraints()
     }
     
     // MARK: - Constraints
-    private func setCardViewConstraints(isOpened: Bool) {
+    private func setCardViewConstraints(isOpened: Bool = false) {
         cardView.translatesAutoresizingMaskIntoConstraints = false
         
-        cardViewLeftConstraint = cardView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: isOpened ? 20: 40)
-        cardViewRightConstraint = cardView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: isOpened ? -20 : -40)
-        cardViewTopConstraint = cardView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: isOpened ? 0 : -80)
+        cardViewTopConstraint = cardView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: isOpened ? -20 : -80)
         
         NSLayoutConstraint.activate([
             cardViewTopConstraint!,
-            cardViewLeftConstraint!,
-            cardViewRightConstraint!,
+            cardView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 40),
+            cardView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40),
             cardView.heightAnchor.constraint(equalToConstant: 200)
         ])
     }
     
     private func deactivateCardViewConstraints() {
-        guard let cardViewLeftConstraint,
-              let cardViewRightConstraint,
-              let cardViewTopConstraint
-        else { return }
-        
-        NSLayoutConstraint.deactivate([
-            cardViewTopConstraint,
-            cardViewLeftConstraint,
-            cardViewRightConstraint
-        ])
+        cardViewTopConstraint?.isActive = false
     }
     
     private func setActivateButtonConstraints() {
         activateButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            activateButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 50),
-            activateButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -50),
+            activateButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45),
+            activateButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45),
             activateButton.heightAnchor.constraint(equalToConstant: 60),
             activateButton.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -70)
         ])
@@ -90,21 +92,24 @@ class ViewController: UIViewController {
     
     // MARK: - UI Callbacks
     @objc
-    func didTapActivateButton() {
+    private func didTapActivateButton() {
         isCardViewOpened = !isCardViewOpened
         tappingAnimation(for: activateButton)
         animateCardView(isCardViewOpened)
     }
-}
-
-// MARK: - Animations
-extension ViewController {
     
+    @objc
+    private func didTapCardView() {
+        isCardViewOpened = !isCardViewOpened
+        animateCardView(isCardViewOpened)
+    }
+    
+    // MARK: - Animation
     private func tappingAnimation(for button: UIButton) {
-        UIView.animate(withDuration: 0.05, delay: 0) {
+        UIView.animate(withDuration: 0.1, delay: 0) {
             button.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
         } completion: { _ in
-            UIView.animate(withDuration: 0.05, delay: 0) {
+            UIView.animate(withDuration: 0.1, delay: 0) {
                 button.transform = CGAffineTransform.identity
             }
         }
@@ -115,7 +120,7 @@ extension ViewController {
         setCardViewConstraints(isOpened: isOpened)
 
         UIView.animate(withDuration: 0.2, delay: 0) {
-            self.cardView.layer.cornerRadius = isOpened ? 20 : 15
+            self.cardView.transform = isOpened ? CGAffineTransform(scaleX: 1.1, y: 1.1) : CGAffineTransform.identity
             self.view.layoutIfNeeded()
         }
     }
