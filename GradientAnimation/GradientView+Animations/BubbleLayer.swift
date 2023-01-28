@@ -75,7 +75,7 @@ class BubbleLayer: CAGradientLayer {
         // Transaction settings
         CATransaction.begin()
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(controlPoints: 0.23, 0.01, 0.77, 0.99))
-        CATransaction.setAnimationDuration(2)
+        CATransaction.setAnimationDuration(1.7)
         
         let animation = CASpringAnimation()
         animation.isRemovedOnCompletion = false
