@@ -10,6 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     // MARK: - Properties
+    private static let willEnterForegroundKey = "willEnterForeground"
     private var isCardViewOpened: Bool = false
     
     // MARK: - UI Elements
@@ -45,7 +46,7 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        cardView.startAnimating(speed: 1.0)
+        cardView.startAnimating()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

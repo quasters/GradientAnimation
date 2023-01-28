@@ -20,7 +20,7 @@ final class GradientView: UIView {
     private let highlightLayer = ResizableLayer()
     
     private var blurEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .regular)
+        let blurEffect = UIBlurEffect(style: .systemChromeMaterial)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         return blurEffectView
