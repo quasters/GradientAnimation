@@ -9,18 +9,23 @@ import UIKit
 
 final class GradientView: UIView {
     
+    private enum AnimationAction {
+        case start, stop, pause, resume
+    }
+    
     // MARK: - Properties
-    let bubbles: [UIColor] = [#colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.5873991847, green: 0.1840409338, blue: 0.9710285068, alpha: 1), #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1), #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.5873991847, green: 0.1840409338, blue: 0.9710285068, alpha: 1), #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.1215686277, green: 0.01176470611, blue: 0.4235294163, alpha: 1)]
-    let highlights: [UIColor] = [#colorLiteral(red: 0.861065805, green: 0, blue: 0.7368372083, alpha: 1), #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1), #colorLiteral(red: 1, green: 0, blue: 0.7544654012, alpha: 1), #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1), #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)]
     private(set) var isAnimationInProcess = false
+    // FIXME: add variability
     private(set) var speedOfAnimation: CGFloat = 1.0
+    public let bubbles: [UIColor] = [#colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.5873991847, green: 0.1840409338, blue: 0.9710285068, alpha: 1), #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1), #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.5873991847, green: 0.1840409338, blue: 0.9710285068, alpha: 1), #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), #colorLiteral(red: 0.1215686277, green: 0.01176470611, blue: 0.4235294163, alpha: 1)]
+    public let highlights: [UIColor] = [#colorLiteral(red: 0.861065805, green: 0, blue: 0.7368372083, alpha: 1), #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1), #colorLiteral(red: 1, green: 0, blue: 0.7544654012, alpha: 1), #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1), #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)]
     
     // MARK: - UIElements
     private let baseLayer = ResizableLayer()
     private let highlightLayer = ResizableLayer()
     
     private var blurEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .systemChromeMaterial)
+        let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         return blurEffectView
@@ -61,7 +66,7 @@ final class GradientView: UIView {
         ])
     }
     
-    func createSublayersIfNeeded(for layer: CALayer, _ colors: [UIColor]) {
+    private func createSublayersIfNeeded(for layer: CALayer, _ colors: [UIColor]) {
         let count = layer.sublayers?.count ?? 0
         let removeCount = count - colors.count
         if removeCount > 0 {
@@ -98,36 +103,44 @@ final class GradientView: UIView {
     }
     
     // MARK: - Animation
-    func startAnimating(speed: CGFloat = 1.0) {
+    public func startAnimation() {
         guard !isAnimationInProcess else { return }
-        
         isAnimationInProcess = true
-        speedOfAnimation = speed
-        
-        self.animateLayer()
+        bubbleLayersAnimation(with: .start)
     }
     
-    func stopAnimating() {
+    public func stopAnimation() {
         guard isAnimationInProcess else { return }
         isAnimationInProcess = false
-        
-        stopAnimation()
+        bubbleLayersAnimation(with: .stop)
     }
     
-    private func animateLayer() {
+    public func pauseAnimation() {
+        guard isAnimationInProcess else { return }
+        isAnimationInProcess = false
+        bubbleLayersAnimation(with: .pause)
+    }
+    
+    public func resumeAnimatoin() {
+        guard !isAnimationInProcess else { return }
+        isAnimationInProcess = true
+        bubbleLayersAnimation(with: .resume)
+    }
+    
+    private func bubbleLayersAnimation(with action: AnimationAction) {
         let layers = (baseLayer.sublayers ?? []) + (highlightLayer.sublayers ?? [])
         for layer in layers {
             if let layer = layer as? BubbleLayer {
-                layer.animateLayer(speed: speedOfAnimation)
-            }
-        }
-    }
-    
-    private func stopAnimation() {
-        let layers = (baseLayer.sublayers ?? []) + (highlightLayer.sublayers ?? [])
-        for layer in layers {
-            if let layer = layer as? BubbleLayer {
-                layer.removeAllAnimations()
+                switch action {
+                case .start:
+                    layer.startAnimation()
+                case .pause:
+                    layer.pauseAnimation()
+                case .resume:
+                    layer.resumeAnimation()
+                case .stop:
+                    layer.stopAnimation()
+                }
             }
         }
     }

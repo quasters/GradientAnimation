@@ -9,12 +9,18 @@ import UIKit
 
 class BubbleLayer: CAGradientLayer {
     
-    private static let startPointKey = "startPoint"
-    private static let endPointKey = "endPoint"
-    private static let opcaityKey = "opacity"
+    // MARK: - Properties
+    private static let startPointKey = "startPointKey"
+    private static let endPointKey = "endPointKey"
+    private static let opcaityKey = "opacityKey"
     
+    private var animationInProcess = false
+    
+    // MARK: - Lifecycle
     init(color: UIColor) {
         super.init()
+        setNotificationCenter()
+        
         self.type = .radial
         
         let position = generateNewPosition()
@@ -34,12 +40,36 @@ class BubbleLayer: CAGradientLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Settings
-    func set(color: UIColor) {
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Application lifecycle
+    @objc
+    private func applicationDidBecomeActive() {
+        guard animationInProcess else { return }
+        animationInProcess = false
+        self.startAnimation()
+    }
+    
+    @objc
+    private func applicationWillResignActive() {
+        guard animationInProcess else { return }
+        self.stopAnimation()
+        animationInProcess = true
+    }
+    
+    // MARK: - Settings
+    public func set(color: UIColor) {
         self.colors = [color.cgColor,
                        color.withAlphaComponent(0.5).cgColor,
                        color.withAlphaComponent(0.0).cgColor]
         self.locations = [0, 0.8, 1.0]
+    }
+    
+    private func setNotificationCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillResignActive), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
     private func generateNewPosition() -> CGPoint {
@@ -60,11 +90,45 @@ class BubbleLayer: CAGradientLayer {
                        y: originalPoint.y + point.y)
     }
     
-    // MARK: Animations
-    func animateLayer(speed: CGFloat) {
-        guard speed > 0 else { return }
+    // MARK: - Animation control
+    public func startAnimation() {
+        guard !animationInProcess else { return }
+        animationInProcess = true
+        animateLayer()
+    }
+    
+    public func stopAnimation() {
+        guard animationInProcess else { return }
+        animationInProcess = false
+        self.removeAllAnimations()
+    }
+    
+    public func pauseAnimation() {
+        guard animationInProcess else { return }
+        animationInProcess = false
+        let pausedTime: CFTimeInterval = self.convertTime(CACurrentMediaTime(), from: nil)
+        self.speed = 0.0
+        self.timeOffset = pausedTime
+    }
+    
+    public func resumeAnimation() {
+        guard !animationInProcess else { return }
+        animationInProcess = true
+        
+        let pausedTime: CFTimeInterval = self.timeOffset
+        self.speed = 1.0
+        self.timeOffset = 0.0
+        let timeSincePause: CFTimeInterval = self.convertTime(CACurrentMediaTime(), from: nil) - pausedTime
+        self.beginTime = timeSincePause
+    }
+    
+    // MARK: - Animation process
+    private func animateLayer() {
+        let speed: CGFloat = 1.0
         
         self.removeAllAnimations()
+        self.speed = 1.0
+        self.beginTime = 0.0
         let currentLayer = self.presentation() ?? self
  
         let newStartPoint = generateNewPosition()
@@ -72,7 +136,7 @@ class BubbleLayer: CAGradientLayer {
         let newEndPoint = displace(originalPoint: newStartPoint, by: newRadius)
         let newOpacity = Float.random(in: 0.5...1)
         
-        // Transaction settings
+        // CATransaction settings
         CATransaction.begin()
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(controlPoints: 0.23, 0.01, 0.77, 0.99))
         CATransaction.setAnimationDuration(1.7)
@@ -116,8 +180,10 @@ class BubbleLayer: CAGradientLayer {
 // MARK: - CAAnimationDelegate
 extension BubbleLayer: CAAnimationDelegate {
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        if flag {
-            animateLayer(speed: 1.0)
+        guard flag else { return }
+        
+        if animationInProcess {
+            animateLayer()
         }
     }
 }
