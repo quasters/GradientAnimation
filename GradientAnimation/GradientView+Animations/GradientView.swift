@@ -27,13 +27,13 @@ final class GradientView: UIView {
     private var blurEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.clipsToBounds = true
         return blurEffectView
     }()
     
     // MARK: - UIView lifecycle
     init() {
         super.init(frame: .zero)
+        self.layer.masksToBounds = true
         
         highlightLayer.backgroundFilters = ["overlayBlendMode"]
         
@@ -90,17 +90,10 @@ final class GradientView: UIView {
         baseLayer.frame = self.layer.bounds
         highlightLayer.frame = self.layer.bounds
         
-        updateCornerRadius(for: blurEffectView.layer)
-        updateCornerRadius(for: baseLayer)
-        updateCornerRadius(for: highlightLayer)
-        
         baseLayer.layoutSublayers()
         highlightLayer.layoutSublayers()
     }
     
-    private func updateCornerRadius(for layer: CALayer) {
-        layer.cornerRadius = self.layer.cornerRadius
-    }
     
     // MARK: - Animation
     public func startAnimation() {
