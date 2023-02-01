@@ -24,7 +24,6 @@ final class ResizableLayer: CALayer {
         super.layoutSublayers()
         sublayers?.forEach { layer in
             layer.frame = self.frame
-            layer.cornerRadius = self.cornerRadius
         }
     }
 }
